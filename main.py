@@ -7,34 +7,155 @@ import pygame
 import sys
 import os
 import tkinter as tk
-from tkinter import simpledialog
 from tkinter import messagebox
 from matplotlib import pyplot as plt
+from tkinter import ttk
 
-ROOT = tk.Tk()
-ROOT.withdraw()
-defaultGreenQ = [10, 10, 10, 10]
-# Ask for simulation time
-simulationTime = simpledialog.askinteger("Simulation", "Enter simulation time in seconds: ", parent=ROOT)
-timePeriod = simpledialog.askinteger("Simulation", "Enter time period for data write to the file: ", parent=ROOT)
+def get_simulation_parameters():
+    # Create the main dialog window
+    dialog = tk.Tk()
+    dialog.title("Traffic Simulation Setup")
+    dialog.geometry("320x720")  # Slightly increased height
+    
+    # Style configuration
+    style = ttk.Style()
+    style.configure('TLabel', padding=5, anchor='center')
+    style.configure('TButton', padding=5)
+    style.configure('TEntry', padding=5)
+    style.configure('TCheckbutton', padding=5)
+    
+    # Create a main frame with padding
+    main_frame = ttk.Frame(dialog, padding="20")
+    main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+    
+    # Configure grid columns to center content
+    main_frame.columnconfigure(0, weight=1)
+    main_frame.columnconfigure(1, weight=1)
+    main_frame.columnconfigure(2, weight=1)
+    
+    # Title Label
+    title_label = ttk.Label(main_frame, text="Traffic Simulation Setup", font=('Helvetica', 14, 'bold'))
+    title_label.grid(row=0, column=0, columnspan=3, pady=(0, 20))
+    
+    # Simulation Time
+    ttk.Label(main_frame, text="Simulation Time (seconds)").grid(row=1, column=0, columnspan=3, pady=(10,0))
+    sim_time = tk.StringVar(value="300")
+    sim_entry = ttk.Entry(main_frame, textvariable=sim_time, width=20, justify='center')
+    sim_entry.grid(row=2, column=0, columnspan=3)
+    
+    # Data Write Period
+    ttk.Label(main_frame, text="Data Write Period (seconds)").grid(row=3, column=0, columnspan=3, pady=(10,0))
+    write_period = tk.StringVar(value="30")
+    write_entry = ttk.Entry(main_frame, textvariable=write_period, width=20, justify='center')
+    write_entry.grid(row=4, column=0, columnspan=3)
+    
+    # Traffic Mode
+    traffic_mode = tk.BooleanVar(value=True)
+    mode_cb = ttk.Checkbutton(main_frame, text="Intelligent Traffic Mode", variable=traffic_mode)
+    mode_cb.grid(row=5, column=0, columnspan=3, pady=(20,0))
+    
+    # Random Timer
+    random_timer = tk.BooleanVar(value=True)
+    timer_entries = []  # Store timer entries for enabling/disabling
+    
+    def on_random_timer_change():
+        state = 'disabled' if random_timer.get() else 'normal'
+        for entry in timer_entries:
+            entry.configure(state=state)
+    
+    random_timer_cb = ttk.Checkbutton(
+        main_frame, 
+        text="Random Green Signal Timer", 
+        variable=random_timer,
+        command=on_random_timer_change
+    )
+    random_timer_cb.grid(row=6, column=0, columnspan=3, pady=(10,20))
+    
+    # Green Signal Timers Frame
+    timer_frame = ttk.LabelFrame(main_frame, text="Green Signal Timers", padding="15")
+    timer_frame.grid(row=7, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=10, padx=20)
+    
+    # Configure timer frame grid
+    timer_frame.columnconfigure(0, weight=1)
+    timer_frame.columnconfigure(1, weight=1)
+    
+    timer_vars = []
+    for i in range(4):
+        ttk.Label(timer_frame, text=f"Direction {i+1}:").grid(row=i, column=0, sticky=tk.E, padx=5)
+        timer_var = tk.StringVar(value="10")
+        timer_vars.append(timer_var)
+        entry = ttk.Entry(timer_frame, textvariable=timer_var, width=15, justify='center', state='disabled')
+        entry.grid(row=i, column=1, sticky=tk.W, padx=5)
+        timer_entries.append(entry)
+    
+    # Vehicle Types Frame with 2x2 grid
+    vehicle_frame = ttk.LabelFrame(main_frame, text="Vehicle Types", padding="15")
+    vehicle_frame.grid(row=8, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=10, padx=20)
+    
+    # Configure vehicle frame grid
+    vehicle_frame.columnconfigure(0, weight=1)
+    vehicle_frame.columnconfigure(1, weight=1)
+    
+    vehicle_vars = {}
+    vehicle_types = ['car', 'bus', 'truck', 'bike']
+    for i, vehicle_type in enumerate(vehicle_types):
+        vehicle_vars[vehicle_type] = tk.BooleanVar(value=True)
+        cb = ttk.Checkbutton(vehicle_frame, text=vehicle_type.capitalize(), 
+                            variable=vehicle_vars[vehicle_type])
+        cb.grid(row=i//2, column=i%2, padx=20, pady=5)
+    
+    # Result dictionary to store all values
+    result = {}
+    
+    def on_submit():
+        try:
+            result['simulation_time'] = int(sim_time.get())
+            result['write_period'] = int(write_period.get())
+            result['intelligent_mode'] = traffic_mode.get()
+            result['random_timer'] = random_timer.get()
+            
+            # If random timer is enabled, use default values
+            if random_timer.get():
+                result['green_timers'] = [10, 10, 10, 10]  # Default values
+            else:
+                result['green_timers'] = [int(var.get()) for var in timer_vars]
+                
+            result['vehicle_types'] = {k: v.get() for k, v in vehicle_vars.items()}
+            
+            # Validate that at least one vehicle type is selected
+            if not any(result['vehicle_types'].values()):
+                messagebox.showerror("Error", "Please select at least one vehicle type.")
+                return
+                
+            dialog.destroy()
+        except ValueError as e:
+            messagebox.showerror("Error", "Please enter valid numbers for time values.")
+    
+    # Submit Button
+    ttk.Button(main_frame, text="Start Simulation", command=on_submit).grid(row=9, column=0, columnspan=3, pady=20)
+    
+    # Center the dialog
+    dialog.update_idletasks()
+    width = dialog.winfo_width()
+    height = dialog.winfo_height()
+    x = (dialog.winfo_screenwidth() // 2) - (width // 2)
+    y = (dialog.winfo_screenheight() // 2) - (height // 2)
+    dialog.geometry(f'{width}x{height}+{x}+{y}')
+    
+    dialog.mainloop()
+    
+    return result
 
-intelligentMode = messagebox.askyesno("Simulation", "Do you want intelligent traffic mode?\n\n" +
-                                    "Yes: Signals respond to stopped vehicle counts\n" +
-                                    "No: Simple round-robin with skipping empty lanes")
-# ask for random green signal timer
-randomGreenSignalTimer = True
-if not intelligentMode:
-    randomGreenSignalTimer = messagebox.askyesno("Simulation", "Do you want random green signal timer?")
-if not randomGreenSignalTimer:
-    # Ask for green signal timer
-    defaultGreenQ[0] = simpledialog.askinteger("Simulation", "Enter green signal timer for direction 1: ", parent=ROOT,
-                                               initialvalue=10)
-    defaultGreenQ[1] = simpledialog.askinteger("Simulation", "Enter green signal timer for direction 2: ", parent=ROOT,
-                                                initialvalue=10)
-    defaultGreenQ[2] = simpledialog.askinteger("Simulation", "Enter green signal timer for direction 3: ", parent=ROOT,
-                                               initialvalue=10)
-    defaultGreenQ[3] = simpledialog.askinteger("Simulation", "Enter green signal timer for direction 4: ", parent=ROOT,
-                                               initialvalue=10)
+# Replace the existing parameter collection code with:
+params = get_simulation_parameters()
+
+# Update global variables with the collected parameters
+simulationTime = params['simulation_time']
+timePeriod = params['write_period']
+intelligentMode = params['intelligent_mode']
+randomGreenSignalTimer = params['random_timer']
+defaultGreenQ = params['green_timers']
+allowedVehicleTypes = params['vehicle_types']
 
 # Default values of signal timers
 defaultGreen = {0: defaultGreenQ[0], 1: defaultGreenQ[1], 2: defaultGreenQ[2], 3: defaultGreenQ[3]}
@@ -72,10 +193,7 @@ stoppingGap = 25  # stopping gap
 movingGap = 25  # moving gap
 
 # set allowed vehicle types here
-allowedVehicleTypes = {'car': messagebox.askyesno("Simulation", "Do you want cars in the simulation?", parent=ROOT),
-                       'bus': messagebox.askyesno("Simulation", "Do you want buses in the simulation?", parent=ROOT),
-                       'truck': messagebox.askyesno("Simulation", "Do you want trucks in the simulation?", parent=ROOT),
-                       'bike': messagebox.askyesno("Simulation", "Do you want bikes in the simulation?", parent=ROOT)}
+
 allowedVehicleTypesList = []
 vehiclesTurned = {'right': {1: [], 2: []}, 'down': {1: [], 2: []}, 'left': {1: [], 2: []}, 'up': {1: [], 2: []}}
 vehiclesNotTurned = {'right': {1: [], 2: []}, 'down': {1: [], 2: []}, 'left': {1: [], 2: []}, 'up': {1: [], 2: []}}
@@ -272,7 +390,7 @@ class ControlPanel:
         
         # Stats overlay properties
         self.show_stats = False
-        self.stats_surface = pygame.Surface((800, 600))
+        self.stats_surface = pygame.Surface((800, 650))
         self.stats_surface.set_alpha(230)  # Semi-transparent
         self.stats_rect = self.stats_surface.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
         
@@ -983,7 +1101,7 @@ def showStatsDialog():
         avgDelay['down']) + "\nDirection 3: " + str(avgDelay['left']) + "\nDirection 4: " + str(
         avgDelay['up'])
 
-    tk.messagebox.showinfo("Simulation Ended", msg, parent=ROOT)
+    tk.messagebox.showinfo("Simulation Ended", msg)
 
 def countStoppedVehicles():
     # Reset the counts first
