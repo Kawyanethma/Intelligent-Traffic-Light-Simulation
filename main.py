@@ -260,6 +260,31 @@ class ControlPanel:
             self.update_simulation_time
         )
         
+        # Add stats button at the bottom of the panel
+        self.stats_button = Button(
+            x + PADDING,
+            y + height - BUTTON_HEIGHT - PADDING,  # Position from bottom
+            width - (PADDING * 2),
+            BUTTON_HEIGHT,
+            "Show Stats",
+            self.toggle_stats
+        )
+        
+        # Stats overlay properties
+        self.show_stats = False
+        self.stats_surface = pygame.Surface((800, 600))
+        self.stats_surface.set_alpha(230)  # Semi-transparent
+        self.stats_rect = self.stats_surface.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+        
+        # Close button for stats
+        self.close_button = Button(
+            self.stats_rect.right - 100,  # Position relative to stats window
+            self.stats_rect.top + 10,
+            80, 30,
+            "Close",
+            self.toggle_stats
+        )
+        
     def draw(self, screen):
         # Draw panel background
         pygame.draw.rect(screen, PANEL_BACKGROUND, self.rect)
@@ -273,10 +298,10 @@ class ControlPanel:
         # Draw mode button
         text = self.font.render("Traffic Mode:", True, TEXT_COLOR)
         screen.blit(text, (self.rect.x + 20, self.rect.y + y_pos - 25))
-        self.mode_button.rect.y = self.rect.y + y_pos  # Update button position
+        self.mode_button.rect.y = self.rect.y + y_pos
         self.mode_button.draw(screen)
         
-        y_pos += 60  # Gap after button
+        y_pos += 60
         
         # Draw green time sliders with labels
         for i, direction in enumerate(["Right", "Down", "Left", "Up"]):
@@ -319,6 +344,13 @@ class ControlPanel:
         self.time_slider.rect.y = self.rect.y + y_pos + 25
         self.time_slider.draw(screen)
         
+        # Draw stats button at bottom
+        self.stats_button.draw(screen)
+        
+        # Draw stats overlay if enabled
+        if self.show_stats:
+            self.draw_stats(screen)
+        
     def handle_event(self, event):
         self.mode_button.handle_event(event)
         for slider in self.sliders:
@@ -326,6 +358,16 @@ class ControlPanel:
         self.yellow_slider.handle_event(event)
         self.speed_slider.handle_event(event)
         self.time_slider.handle_event(event)
+        self.stats_button.handle_event(event)
+        
+        # Handle close button when stats are shown
+        if self.show_stats:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                # Check if click is within stats window
+                if self.stats_rect.collidepoint(mouse_pos):
+                    # Handle close button
+                    self.close_button.handle_event(event)
         
     def toggle_mode(self):
         global intelligentMode
@@ -352,7 +394,61 @@ class ControlPanel:
     def update_simulation_time(self, value):
         global simulationTime
         simulationTime = value
-
+        
+    def toggle_stats(self):
+        self.show_stats = not self.show_stats
+            
+    def draw_stats(self, screen):
+        # Fill stats surface with dark background
+        self.stats_surface.fill((40, 44, 52))
+        
+        font = pygame.font.Font(None, 24)
+        y_offset = 50  # Start below close button
+        padding = 20
+        
+        # Prepare stats text
+        stats_lines = [
+            f"Direction-wise Vehicle Counts:",
+            f"Right: Total={vehicles['right']['crossed']} (Straight={directionRight['straight']}, Left={directionRight['left']}, Right={directionRight['right']})",
+            f"Down:  Total={vehicles['down']['crossed']} (Straight={directionDown['straight']}, Left={directionDown['left']}, Right={directionDown['right']})",
+            f"Left:  Total={vehicles['left']['crossed']} (Straight={directionLeft['straight']}, Left={directionLeft['left']}, Right={directionLeft['right']})",
+            f"Up:    Total={vehicles['up']['crossed']} (Straight={directionUp['straight']}, Left={directionUp['left']}, Right={directionUp['right']})",
+            "",
+            f"Average Delays:",
+            f"Right: {avgDelay['right']:.2f}",
+            f"Down:  {avgDelay['down']:.2f}",
+            f"Left:  {avgDelay['left']:.2f}",
+            f"Up:    {avgDelay['up']:.2f}",
+            "",
+            f"Stopped Vehicles:",
+            f"Right: {stoppedVehicles['right']}",
+            f"Down:  {stoppedVehicles['down']}",
+            f"Left:  {stoppedVehicles['left']}",
+            f"Up:    {stoppedVehicles['up']}",
+            "",
+            f"Time Elapsed: {timeElapsed}s"
+        ]
+        
+        # Draw title
+        title = pygame.font.Font(None, 36).render("Simulation Statistics", True, (255, 255, 255))
+        title_rect = title.get_rect(centerx=self.stats_surface.get_width()/2, top=10)
+        self.stats_surface.blit(title, title_rect)
+        
+        # Draw stats text
+        for line in stats_lines:
+            text_surface = font.render(line, True, (255, 255, 255))
+            self.stats_surface.blit(text_surface, (padding, y_offset))
+            y_offset += 30
+        
+        # Draw border around stats window
+        pygame.draw.rect(self.stats_surface, (100, 100, 100), self.stats_surface.get_rect(), 2)
+        
+        # Blit stats surface to main screen
+        screen.blit(self.stats_surface, self.stats_rect)
+        
+        # Draw close button
+        self.close_button.draw(screen)
+        
 class TrafficSignal:
     def __init__(self, red, yellow, green):
         self.red = red
@@ -699,25 +795,25 @@ def repeat():
         updateValues()
         isVehicleStopped[currentGreen] = False
         
-        # Only check for empty lanes and skip in intelligent mode
-        if intelligentMode:
-            current_direction = directionNumbers[currentGreen]
-            has_vehicles = False
-            for lane in [0, 1, 2]:
-                if len(vehicles[current_direction][lane]) > 0:
-                    for vehicle in vehicles[current_direction][lane]:
-                        if vehicle.crossed == 0:
-                            has_vehicles = True
-                            break
-                if has_vehicles:
-                    break
-            
-            # If no vehicles in current direction, skip to yellow
-            if not has_vehicles:
-                signals[currentGreen].green = 0
+        # Check if current direction has any vehicles waiting
+        current_direction = directionNumbers[currentGreen]
+        has_vehicles = False
+        for lane in [0, 1, 2]:
+            if len(vehicles[current_direction][lane]) > 0:
+                for vehicle in vehicles[current_direction][lane]:
+                    if vehicle.crossed == 0:  # Only count vehicles that haven't crossed yet
+                        has_vehicles = True
+                        break
+            if has_vehicles:
+                break
+        
+        # If no vehicles in current direction, skip to next signal
+        if not has_vehicles:
+            signals[currentGreen].green = 0
+            break
         
         time.sleep(1)
-        
+    
     currentYellow = 1  # set yellow signal on
     
     # reset stop coordinates of lanes and vehicles
@@ -740,60 +836,35 @@ def repeat():
     signals[currentGreen].yellow = defaultYellow
     signals[currentGreen].red = defaultRed
 
-    if intelligentMode:
-        # Intelligent mode: prioritize based on stopped vehicles
-        stopped_counts = countStoppedVehicles()
-        max_stopped = -1
-        max_direction = None
+    # Find next direction with waiting vehicles
+    next_signal_found = False
+    checked_count = 0
+    temp_next = (currentGreen + 1) % noOfSignals
+
+    while not next_signal_found and checked_count < noOfSignals:
+        direction = directionNumbers[temp_next]
+        has_vehicles = False
         
-        # Find direction with most stopped vehicles
-        for direction, count in stopped_counts.items():
-            if count > max_stopped:
-                max_stopped = count
-                if direction == 'right':
-                    max_direction = 0
-                elif direction == 'down':
-                    max_direction = 1
-                elif direction == 'left':
-                    max_direction = 2
-                elif direction == 'up':
-                    max_direction = 3
-        
-        # If there are stopped vehicles, prioritize that direction
-        if max_direction is not None and max_stopped > 0:
-            nextGreen = max_direction
-        else:
-            nextGreen = (currentGreen + 1) % noOfSignals
-    else:
-        # Simple mode: round-robin with empty lane checking
-        found_next = False
-        checked_count = 0
-        next_check = (currentGreen + 1) % noOfSignals
-        
-        while not found_next and checked_count < noOfSignals:
-            direction = directionNumbers[next_check]
-            # Check if there are any vehicles in this direction
-            has_vehicles = False
-            for lane in [0, 1, 2]:
-                if len(vehicles[direction][lane]) > 0:
-                    # Check if there are any vehicles that haven't crossed yet
-                    for vehicle in vehicles[direction][lane]:
-                        if vehicle.crossed == 0:
-                            has_vehicles = True
-                            break
-                if has_vehicles:
-                    break
-            
+        # Check if this direction has any vehicles waiting
+        for lane in [0, 1, 2]:
+            if len(vehicles[direction][lane]) > 0:
+                for vehicle in vehicles[direction][lane]:
+                    if vehicle.crossed == 0:  # Only count vehicles that haven't crossed yet
+                        has_vehicles = True
+                        break
             if has_vehicles:
-                found_next = True
-                nextGreen = next_check
-            else:
-                next_check = (next_check + 1) % noOfSignals
-                checked_count += 1
+                break
         
-        # If no vehicles found in any direction, just move to next signal
-        if not found_next:
-            nextGreen = (currentGreen + 1) % noOfSignals
+        if has_vehicles:
+            next_signal_found = True
+            nextGreen = temp_next
+        else:
+            temp_next = (temp_next + 1) % noOfSignals
+            checked_count += 1
+
+    # If no direction has vehicles, just move to next signal
+    if not next_signal_found:
+        nextGreen = (currentGreen + 1) % noOfSignals
     
     currentGreen = nextGreen
     # Update red time for other signals
@@ -1090,7 +1161,6 @@ class Main:
     timer_event = pygame.USEREVENT + 1
     pygame.time.set_timer(timer_event, time_interval)
     speed_multiplier = 100
-    file = open("simulationData.txt", "w")
     currentTime = 0
     while True:
         for event in pygame.event.get():
