@@ -272,7 +272,7 @@ class ControlPanel:
         
         # Stats overlay properties
         self.show_stats = False
-        self.stats_surface = pygame.Surface((800, 600))
+        self.stats_surface = pygame.Surface((800, 650))
         self.stats_surface.set_alpha(230)  # Semi-transparent
         self.stats_rect = self.stats_surface.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
         
@@ -373,6 +373,7 @@ class ControlPanel:
         global intelligentMode
         intelligentMode = not intelligentMode
         self.mode_button.text = "Mode: Intelligent" if intelligentMode else "Mode: Traditional"
+        print(f"Traffic control mode changed to: {'Intelligent' if intelligentMode else 'Traditional'}")  # Debug print
         
     def update_green_time(self, signal_index, value):
         global defaultGreen
@@ -421,10 +422,10 @@ class ControlPanel:
             f"Up:    {avgDelay['up']:.2f}",
             "",
             f"Stopped Vehicles:",
-            f"Right: {stoppedVehicles['right']}",
-            f"Down:  {stoppedVehicles['down']}",
-            f"Left:  {stoppedVehicles['left']}",
-            f"Up:    {stoppedVehicles['up']}",
+            f"Right: {stoppedVehiclesInJunction['right']}",
+            f"Down:  {stoppedVehiclesInJunction['down']}",
+            f"Left:  {stoppedVehiclesInJunction['left']}",
+            f"Up:    {stoppedVehiclesInJunction['up']}",
             "",
             f"Time Elapsed: {timeElapsed}s"
         ]
@@ -790,7 +791,7 @@ def printStatus():
 def repeat():
     global currentGreen, currentYellow, nextGreen
 
-    while signals[currentGreen].green > 0:  # while the timer of current green signal is not zero
+    while signals[currentGreen].green > 0:
         printStatus()
         updateValues()
         isVehicleStopped[currentGreen] = False
@@ -801,14 +802,14 @@ def repeat():
         for lane in [0, 1, 2]:
             if len(vehicles[current_direction][lane]) > 0:
                 for vehicle in vehicles[current_direction][lane]:
-                    if vehicle.crossed == 0:  # Only count vehicles that haven't crossed yet
+                    if vehicle.crossed == 0:
                         has_vehicles = True
                         break
             if has_vehicles:
                 break
         
-        # If no vehicles in current direction, skip to next signal
-        if not has_vehicles:
+        # If intelligent mode is on and no vehicles in current direction, skip to next signal
+        if intelligentMode and not has_vehicles:
             signals[currentGreen].green = 0
             break
         
@@ -821,14 +822,14 @@ def repeat():
         for vehicle in vehicles[directionNumbers[currentGreen]][i]:
             vehicle.stop = defaultStop[directionNumbers[currentGreen]]
     
-    while signals[currentGreen].yellow > 0:  # while the timer of current yellow signal is not zero
+    while signals[currentGreen].yellow > 0:
         printStatus()
         updateValues()
         time.sleep(1)
-    currentYellow = 0  # set yellow signal off
+    currentYellow = 0
     isVehicleStopped[currentGreen] = True
 
-    # reset all signal times of current signal to default/random times
+    # Reset signal times
     if randomGreenSignalTimer:
         signals[currentGreen].green = random.randint(randomGreenSignalTimerRange[0], randomGreenSignalTimerRange[1])
     else:
@@ -836,34 +837,31 @@ def repeat():
     signals[currentGreen].yellow = defaultYellow
     signals[currentGreen].red = defaultRed
 
-    # Find next direction with waiting vehicles
-    next_signal_found = False
-    checked_count = 0
-    temp_next = (currentGreen + 1) % noOfSignals
-
-    while not next_signal_found and checked_count < noOfSignals:
-        direction = directionNumbers[temp_next]
-        has_vehicles = False
+    if intelligentMode:
+        # Get current stopped vehicle counts
+        stopped_counts = countStoppedVehicles()
         
-        # Check if this direction has any vehicles waiting
-        for lane in [0, 1, 2]:
-            if len(vehicles[direction][lane]) > 0:
-                for vehicle in vehicles[direction][lane]:
-                    if vehicle.crossed == 0:  # Only count vehicles that haven't crossed yet
-                        has_vehicles = True
-                        break
-            if has_vehicles:
-                break
+        # Create a list of directions excluding the current green
+        available_directions = []
+        for i in range(noOfSignals):
+            if i != currentGreen:
+                direction = directionNumbers[i]
+                count = stopped_counts[direction]
+                available_directions.append((i, count))
         
-        if has_vehicles:
-            next_signal_found = True
-            nextGreen = temp_next
+        if available_directions:
+            # Sort by number of stopped vehicles (highest to lowest)
+            available_directions.sort(key=lambda x: x[1], reverse=True)
+            
+            # Select the direction with the most stopped vehicles
+            nextGreen = available_directions[0][0]
+            
+            print(f"Intelligent mode: Switching to direction {nextGreen} with {available_directions[0][1]} stopped vehicles")
         else:
-            temp_next = (temp_next + 1) % noOfSignals
-            checked_count += 1
-
-    # If no direction has vehicles, just move to next signal
-    if not next_signal_found:
+            # Fallback to next signal if no data available
+            nextGreen = (currentGreen + 1) % noOfSignals
+    else:
+        # Traditional mode - cycle through signals
         nextGreen = (currentGreen + 1) % noOfSignals
     
     currentGreen = nextGreen
@@ -992,48 +990,60 @@ def countStoppedVehicles():
     for direction in stoppedVehiclesInJunction:
         stoppedVehiclesInJunction[direction] = 0
         
-    # Count all stopped vehicles in each direction
-    for direction in vehicles:
-        for lane in [0, 1, 2]:
-            prev_vehicle = None
-            for vehicle in vehicles[direction][lane]:
-                if vehicle.crossed == 0:  # Only check vehicles that haven't crossed yet
-                    is_stopped = False
-                    
-                    # Check if vehicle is stopped due to signal
-                    if direction == 'right':
-                        if vehicle.x + vehicle.image.get_rect().width >= vehicle.stop:
-                            is_stopped = True
-                    elif direction == 'down':
-                        if vehicle.y + vehicle.image.get_rect().height >= vehicle.stop:
-                            is_stopped = True
-                    elif direction == 'left':
-                        if vehicle.x <= vehicle.stop:
-                            is_stopped = True
-                    elif direction == 'up':
-                        if vehicle.y <= vehicle.stop:
-                            is_stopped = True
-                    
-                    # Check if vehicle is stopped due to vehicle in front
-                    if prev_vehicle and prev_vehicle.crossed == 0:
-                        if direction == 'right':
-                            if vehicle.x + vehicle.image.get_rect().width >= (prev_vehicle.x - movingGap):
-                                is_stopped = True
-                        elif direction == 'down':
-                            if vehicle.y + vehicle.image.get_rect().height >= (prev_vehicle.y - movingGap):
-                                is_stopped = True
-                        elif direction == 'left':
-                            if vehicle.x <= (prev_vehicle.x + prev_vehicle.image.get_rect().width + movingGap):
-                                is_stopped = True
-                        elif direction == 'up':
-                            if vehicle.y <= (prev_vehicle.y + prev_vehicle.image.get_rect().height + movingGap):
-                                is_stopped = True
-                    
-                    if is_stopped:
-                        stoppedVehiclesInJunction[direction] += 1
-                
-                prev_vehicle = vehicle
+    try:
+        # Count all stopped vehicles in each direction
+        for direction in vehicles:
+            for lane in [0, 1, 2]:
+                prev_vehicle = None
+                for vehicle in vehicles[direction][lane]:
+                    if not hasattr(vehicle, 'crossed') or not hasattr(vehicle, 'stop'):
+                        continue  # Skip vehicles without required attributes
                         
+                    if vehicle.crossed == 0:  # Only check vehicles that haven't crossed yet
+                        is_stopped = False
+                        
+                        # Check if vehicle is stopped due to signal
+                        try:
+                            if direction == 'left':  # Changed from 'right'
+                                if vehicle.x + vehicle.image.get_rect().width >= vehicle.stop:
+                                    is_stopped = True
+                            elif direction == 'down':
+                                if vehicle.y + vehicle.image.get_rect().height >= vehicle.stop:
+                                    is_stopped = True
+                            elif direction == 'right':  # Changed from 'left'
+                                if vehicle.x <= vehicle.stop:
+                                    is_stopped = True
+                            elif direction == 'up':
+                                if vehicle.y <= vehicle.stop:
+                                    is_stopped = True
+                            
+                            # Check if vehicle is stopped due to vehicle in front
+                            if prev_vehicle and prev_vehicle.crossed == 0:
+                                if direction == 'right':
+                                    if vehicle.x + vehicle.image.get_rect().width >= (prev_vehicle.x - movingGap):
+                                        is_stopped = True
+                                elif direction == 'down':
+                                    if vehicle.y + vehicle.image.get_rect().height >= (prev_vehicle.y - movingGap):
+                                        is_stopped = True
+                                elif direction == 'left':
+                                    if vehicle.x <= (prev_vehicle.x + prev_vehicle.image.get_rect().width + movingGap):
+                                        is_stopped = True
+                                elif direction == 'up':
+                                    if vehicle.y <= (prev_vehicle.y + prev_vehicle.image.get_rect().height + movingGap):
+                                        is_stopped = True
+                            
+                            if is_stopped:
+                                stoppedVehiclesInJunction[direction] += 1
+                        
+                        except AttributeError as e:
+                            print(f"Warning: Vehicle missing required attribute - {e}")
+                            continue
+                    
+                    prev_vehicle = vehicle
+                    
+    except Exception as e:
+        print(f"Error in countStoppedVehicles: {e}")
+        
     return stoppedVehiclesInJunction
 
 
