@@ -272,7 +272,7 @@ class ControlPanel:
         
         # Stats overlay properties
         self.show_stats = False
-        self.stats_surface = pygame.Surface((800, 650))
+        self.stats_surface = pygame.Surface((800, 600))
         self.stats_surface.set_alpha(230)  # Semi-transparent
         self.stats_rect = self.stats_surface.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
         
@@ -997,43 +997,60 @@ def countStoppedVehicles():
                 prev_vehicle = None
                 for vehicle in vehicles[direction][lane]:
                     if not hasattr(vehicle, 'crossed') or not hasattr(vehicle, 'stop'):
-                        continue  # Skip vehicles without required attributes
+                        continue
                         
                     if vehicle.crossed == 0:  # Only check vehicles that haven't crossed yet
                         is_stopped = False
                         
-                        # Check if vehicle is stopped due to signal
                         try:
-                            if direction == 'left':  # Changed from 'right'
-                                if vehicle.x + vehicle.image.get_rect().width >= vehicle.stop:
+                            # Get vehicle dimensions
+                            vehicle_width = vehicle.image.get_rect().width
+                            vehicle_height = vehicle.image.get_rect().height
+                            
+                            # Check if vehicle is stopped at signal
+                            if direction == 'right':
+                                # Vehicle moving right is stopped if its front reaches the stop line
+                                if vehicle.x + vehicle_width >= vehicle.stop:
                                     is_stopped = True
-                            elif direction == 'down':
-                                if vehicle.y + vehicle.image.get_rect().height >= vehicle.stop:
-                                    is_stopped = True
-                            elif direction == 'right':  # Changed from 'left'
+                            elif direction == 'left':
+                                # Vehicle moving left is stopped if its front reaches the stop line
                                 if vehicle.x <= vehicle.stop:
                                     is_stopped = True
+                            elif direction == 'down':
+                                # Vehicle moving down is stopped if its front reaches the stop line
+                                if vehicle.y + vehicle_height >= vehicle.stop:
+                                    is_stopped = True
                             elif direction == 'up':
+                                # Vehicle moving up is stopped if its front reaches the stop line
                                 if vehicle.y <= vehicle.stop:
                                     is_stopped = True
                             
                             # Check if vehicle is stopped due to vehicle in front
                             if prev_vehicle and prev_vehicle.crossed == 0:
                                 if direction == 'right':
-                                    if vehicle.x + vehicle.image.get_rect().width >= (prev_vehicle.x - movingGap):
-                                        is_stopped = True
-                                elif direction == 'down':
-                                    if vehicle.y + vehicle.image.get_rect().height >= (prev_vehicle.y - movingGap):
+                                    # Check if too close to vehicle in front
+                                    if (vehicle.x + vehicle_width) >= (prev_vehicle.x - movingGap):
                                         is_stopped = True
                                 elif direction == 'left':
                                     if vehicle.x <= (prev_vehicle.x + prev_vehicle.image.get_rect().width + movingGap):
+                                        is_stopped = True
+                                elif direction == 'down':
+                                    if (vehicle.y + vehicle_height) >= (prev_vehicle.y - movingGap):
                                         is_stopped = True
                                 elif direction == 'up':
                                     if vehicle.y <= (prev_vehicle.y + prev_vehicle.image.get_rect().height + movingGap):
                                         is_stopped = True
                             
+                            # Additional check: Ensure vehicle is actually in the junction area
                             if is_stopped:
-                                stoppedVehiclesInJunction[direction] += 1
+                                if direction == 'right' and vehicle.x < stopLines[direction]:
+                                    stoppedVehiclesInJunction[direction] += 1
+                                elif direction == 'left' and vehicle.x > stopLines[direction]:
+                                    stoppedVehiclesInJunction[direction] += 1
+                                elif direction == 'down' and vehicle.y < stopLines[direction]:
+                                    stoppedVehiclesInJunction[direction] += 1
+                                elif direction == 'up' and vehicle.y > stopLines[direction]:
+                                    stoppedVehiclesInJunction[direction] += 1
                         
                         except AttributeError as e:
                             print(f"Warning: Vehicle missing required attribute - {e}")
