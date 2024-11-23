@@ -5,7 +5,6 @@ import threading
 import pandas as pd
 import pygame
 import sys
-import os
 import tkinter as tk
 from tkinter import messagebox
 from matplotlib import pyplot as plt
@@ -915,21 +914,30 @@ def repeat():
         isVehicleStopped[currentGreen] = False
         
         # Check if current direction has any vehicles waiting
-        current_direction = directionNumbers[currentGreen]
-        has_vehicles = False
-        for lane in [0, 1, 2]:
-            if len(vehicles[current_direction][lane]) > 0:
-                for vehicle in vehicles[current_direction][lane]:
-                    if vehicle.crossed == 0:
-                        has_vehicles = True
-                        break
-            if has_vehicles:
+        if intelligentMode:
+            current_direction = directionNumbers[currentGreen]
+            has_vehicles = False
+            
+            # Check all lanes in current direction for waiting vehicles
+            for lane in [0, 1, 2]:
+                if vehicles[current_direction][lane]:  # If there are vehicles in this lane
+                    for vehicle in vehicles[current_direction][lane]:
+                        # Check if vehicle hasn't crossed and is approaching the signal
+                        if (vehicle.crossed == 0 and 
+                            ((current_direction == 'right' and vehicle.x < stopLines[current_direction]) or
+                             (current_direction == 'down' and vehicle.y < stopLines[current_direction]) or
+                             (current_direction == 'left' and vehicle.x > stopLines[current_direction]) or
+                             (current_direction == 'up' and vehicle.y > stopLines[current_direction]))):
+                            has_vehicles = True
+                            break
+                if has_vehicles:
+                    break
+            
+            # If no vehicles are waiting, end green signal early
+            if not has_vehicles:
+                print(f"No vehicles detected in direction {current_direction}, switching signal...")
+                signals[currentGreen].green = 0
                 break
-        
-        # If intelligent mode is on and no vehicles in current direction, skip to next signal
-        if intelligentMode and not has_vehicles:
-            signals[currentGreen].green = 0
-            break
         
         time.sleep(1)
     
@@ -964,17 +972,31 @@ def repeat():
         for i in range(noOfSignals):
             if i != currentGreen:
                 direction = directionNumbers[i]
+                # Check both stopped vehicles and approaching vehicles
                 count = stopped_counts[direction]
+                # Add approaching vehicles check
+                for lane in [0, 1, 2]:
+                    for vehicle in vehicles[direction][lane]:
+                        if (vehicle.crossed == 0 and 
+                            ((direction == 'right' and vehicle.x < stopLines[direction]) or
+                             (direction == 'down' and vehicle.y < stopLines[direction]) or
+                             (direction == 'left' and vehicle.x > stopLines[direction]) or
+                             (direction == 'up' and vehicle.y > stopLines[direction]))):
+                            count += 1
                 available_directions.append((i, count))
         
         if available_directions:
-            # Sort by number of stopped vehicles (highest to lowest)
+            # Sort by number of vehicles (highest to lowest)
             available_directions.sort(key=lambda x: x[1], reverse=True)
             
-            # Select the direction with the most stopped vehicles
-            nextGreen = available_directions[0][0]
-            
-            print(f"Intelligent mode: Switching to direction {nextGreen} with {available_directions[0][1]} stopped vehicles")
+            # Select the direction with the most vehicles
+            if available_directions[0][1] > 0:  # Only switch if there are actually vehicles waiting
+                nextGreen = available_directions[0][0]
+                print(f"Intelligent mode: Switching to direction {nextGreen} with {available_directions[0][1]} vehicles")
+            else:
+                # If no vehicles in any direction, move to next signal
+                nextGreen = (currentGreen + 1) % noOfSignals
+                print("No vehicles detected in any direction, cycling signals normally")
         else:
             # Fallback to next signal if no data available
             nextGreen = (currentGreen + 1) % noOfSignals
@@ -1302,7 +1324,7 @@ class Main:
     thread3.start()
 
     clock = pygame.time.Clock()
-    time_interval = 500  # 500 milliseconds == 0.5 seconds
+    time_interval = 500  
     timer_event = pygame.USEREVENT + 1
     pygame.time.set_timer(timer_event, time_interval)
     speed_multiplier = 100
@@ -1328,7 +1350,7 @@ class Main:
         screen.fill(black)
         screen.blit(background, (0, 0))  # display background in simulation
 
-        # Your existing simulation drawing code
+        # simulation drawing code
         for i in range(0, noOfSignals):
             if i == currentGreen:
                 if currentYellow == 1:

@@ -112658,3 +112658,503 @@ Down:  64
 Left:  55
 Up:    58
 ----------------------------------------
+
+Time: 30s
+Direction-wise Vehicle Counts:
+Right: Total=0 (Straight=0, Left=0, Right=0)
+Down:  Total=6 (Straight=5, Left=0, Right=1)
+Left:  Total=3 (Straight=2, Left=0, Right=1)
+Up:    Total=8 (Straight=3, Left=0, Right=0)
+
+Average Delays:
+Right: 2.50
+Down:  3.00
+Left:  2.62
+Up:    2.00
+
+Stopped Vehicles:
+Right: 5
+Down:  4
+Left:  4
+Up:    5
+----------------------------------------
+
+Time: 60s
+Direction-wise Vehicle Counts:
+Right: Total=7 (Straight=3, Left=2, Right=2)
+Down:  Total=16 (Straight=10, Left=1, Right=5)
+Left:  Total=13 (Straight=10, Left=2, Right=1)
+Up:    Total=14 (Straight=7, Left=0, Right=0)
+
+Average Delays:
+Right: 3.43
+Down:  2.05
+Left:  2.17
+Up:    2.00
+
+Stopped Vehicles:
+Right: 7
+Down:  11
+Left:  9
+Up:    12
+----------------------------------------
+
+Time: 90s
+Direction-wise Vehicle Counts:
+Right: Total=15 (Straight=6, Left=6, Right=3)
+Down:  Total=26 (Straight=16, Left=3, Right=6)
+Left:  Total=13 (Straight=10, Left=2, Right=1)
+Up:    Total=17 (Straight=8, Left=0, Right=0)
+
+Average Delays:
+Right: 2.23
+Down:  1.80
+Left:  2.30
+Up:    2.40
+
+Stopped Vehicles:
+Right: 13
+Down:  20
+Left:  15
+Up:    15
+----------------------------------------
+
+Time: 120s
+Direction-wise Vehicle Counts:
+Right: Total=15 (Straight=6, Left=6, Right=3)
+Down:  Total=28 (Straight=17, Left=4, Right=7)
+Left:  Total=26 (Straight=17, Left=4, Right=5)
+Up:    Total=17 (Straight=8, Left=0, Right=0)
+
+Average Delays:
+Right: 2.20
+Down:  1.74
+Left:  1.83
+Up:    2.32
+
+Stopped Vehicles:
+Right: 20
+Down:  25
+Left:  23
+Up:    22
+----------------------------------------
+
+Time: 30s
+Direction-wise Vehicle Counts:
+Right: Total=7 (Straight=7, Left=0, Right=0)
+Down:  Total=6 (Straight=4, Left=2, Right=0)
+Left:  Total=3 (Straight=3, Left=0, Right=0)
+Up:    Total=2 (Straight=2, Left=0, Right=0)
+
+Average Delays:
+Right: 1.90
+Down:  2.00
+Left:  3.00
+Up:    2.90
+
+Stopped Vehicles:
+Right: 5
+Down:  6
+Left:  3
+Up:    5
+----------------------------------------
+
+Time: 30s
+Direction-wise Vehicle Counts:
+Right: Total=7 (Straight=4, Left=1, Right=2)
+Down:  Total=1 (Straight=1, Left=0, Right=0)
+Left:  Total=8 (Straight=3, Left=3, Right=1)
+Up:    Total=0 (Straight=0, Left=0, Right=0)
+
+Average Delays:
+Right: 1.83
+Down:  2.00
+Left:  1.79
+Up:    7.50
+
+Stopped Vehicles:
+Right: 3
+Down:  6
+Left:  7
+Up:    2
+----------------------------------------
+
+Time: 60s
+Direction-wise Vehicle Counts:
+Right: Total=7 (Straight=4, Left=1, Right=2)
+Down:  Total=14 (Straight=7, Left=3, Right=4)
+Left:  Total=17 (Straight=7, Left=6, Right=3)
+Up:    Total=0 (Straight=0, Left=0, Right=0)
+
+Average Delays:
+Right: 2.93
+Down:  1.37
+Left:  1.36
+Up:    4.29
+
+Stopped Vehicles:
+Right: 7
+Down:  15
+Left:  14
+Up:    7
+----------------------------------------
+
+Time: 90s
+Direction-wise Vehicle Counts:
+Right: Total=7 (Straight=4, Left=1, Right=2)
+Down:  Total=24 (Straight=15, Left=3, Right=4)
+Left:  Total=17 (Straight=7, Left=6, Right=4)
+Up:    Total=12 (Straight=9, Left=0, Right=0)
+
+Average Delays:
+Right: 2.37
+Down:  1.43
+Left:  1.45
+Up:    2.77
+
+Stopped Vehicles:
+Right: 15
+Down:  23
+Left:  21
+Up:    13
+----------------------------------------
+
+Time: 120s
+Direction-wise Vehicle Counts:
+Right: Total=25 (Straight=14, Left=8, Right=3)
+Down:  Total=27 (Straight=17, Left=4, Right=6)
+Left:  Total=17 (Straight=7, Left=6, Right=4)
+Up:    Total=12 (Straight=9, Left=0, Right=0)
+
+Average Delays:
+Right: 2.24
+Down:  1.21
+Left:  1.75
+Up:    2.68
+
+Stopped Vehicles:
+Right: 19
+Down:  34
+Left:  26
+Up:    19
+----------------------------------------
+
+Time: 150s
+Direction-wise Vehicle Counts:
+Right: Total=26 (Straight=14, Left=8, Right=4)
+Down:  Total=42 (Straight=24, Left=8, Right=10)
+Left:  Total=32 (Straight=16, Left=8, Right=8)
+Up:    Total=12 (Straight=9, Left=0, Right=0)
+
+Average Delays:
+Right: 1.91
+Down:  1.27
+Left:  1.72
+Up:    2.54
+
+Stopped Vehicles:
+Right: 29
+Down:  41
+Left:  30
+Up:    26
+----------------------------------------
+
+Time: 180s
+Direction-wise Vehicle Counts:
+Right: Total=39 (Straight=19, Left=13, Right=7)
+Down:  Total=46 (Straight=28, Left=8, Right=10)
+Left:  Total=32 (Straight=16, Left=8, Right=8)
+Up:    Total=31 (Straight=18, Left=0, Right=0)
+
+Average Delays:
+Right: 1.67
+Down:  1.21
+Left:  1.80
+Up:    2.85
+
+Stopped Vehicles:
+Right: 38
+Down:  52
+Left:  37
+Up:    27
+----------------------------------------
+
+Time: 30s
+Direction-wise Vehicle Counts:
+Right: Total=7 (Straight=5, Left=2, Right=0)
+Down:  Total=2 (Straight=0, Left=1, Right=1)
+Left:  Total=0 (Straight=0, Left=0, Right=0)
+Up:    Total=0 (Straight=0, Left=0, Right=0)
+
+Average Delays:
+Right: 0.58
+Down:  3.83
+Left:  2.14
+Up:    15.00
+
+Stopped Vehicles:
+Right: 6
+Down:  3
+Left:  7
+Up:    1
+----------------------------------------
+
+Time: 60s
+Direction-wise Vehicle Counts:
+Right: Total=15 (Straight=7, Left=3, Right=3)
+Down:  Total=14 (Straight=9, Left=2, Right=3)
+Left:  Total=10 (Straight=6, Left=2, Right=2)
+Up:    Total=0 (Straight=0, Left=0, Right=0)
+
+Average Delays:
+Right: 0.91
+Down:  2.20
+Left:  2.14
+Up:    3.75
+
+Stopped Vehicles:
+Right: 16
+Down:  10
+Left:  11
+Up:    8
+----------------------------------------
+
+Time: 90s
+Direction-wise Vehicle Counts:
+Right: Total=21 (Straight=11, Left=6, Right=4)
+Down:  Total=14 (Straight=9, Left=2, Right=3)
+Left:  Total=10 (Straight=6, Left=2, Right=2)
+Up:    Total=15 (Straight=9, Left=0, Right=0)
+
+Average Delays:
+Right: 0.90
+Down:  2.64
+Left:  1.93
+Up:    2.53
+
+Stopped Vehicles:
+Right: 24
+Down:  14
+Left:  20
+Up:    15
+----------------------------------------
+
+Time: 30s
+Direction-wise Vehicle Counts:
+Right: Total=5 (Straight=2, Left=1, Right=2)
+Down:  Total=5 (Straight=3, Left=1, Right=1)
+Left:  Total=0 (Straight=0, Left=0, Right=0)
+Up:    Total=0 (Straight=0, Left=0, Right=0)
+
+Average Delays:
+Right: 1.50
+Down:  3.50
+Left:  2.50
+Up:    2.50
+
+Stopped Vehicles:
+Right: 3
+Down:  3
+Left:  6
+Up:    6
+----------------------------------------
+
+Time: 60s
+Direction-wise Vehicle Counts:
+Right: Total=5 (Straight=2, Left=1, Right=2)
+Down:  Total=7 (Straight=5, Left=1, Right=1)
+Left:  Total=12 (Straight=6, Left=4, Right=2)
+Up:    Total=0 (Straight=0, Left=0, Right=0)
+
+Average Delays:
+Right: 2.44
+Down:  2.38
+Left:  1.95
+Up:    1.76
+
+Stopped Vehicles:
+Right: 8
+Down:  8
+Left:  11
+Up:    17
+----------------------------------------
+
+Time: 90s
+Direction-wise Vehicle Counts:
+Right: Total=17 (Straight=7, Left=5, Right=5)
+Down:  Total=7 (Straight=5, Left=1, Right=1)
+Left:  Total=12 (Straight=6, Left=4, Right=2)
+Up:    Total=21 (Straight=16, Left=0, Right=0)
+
+Average Delays:
+Right: 2.42
+Down:  1.79
+Left:  1.69
+Up:    1.92
+
+Stopped Vehicles:
+Right: 12
+Down:  19
+Left:  21
+Up:    19
+----------------------------------------
+
+Time: 120s
+Direction-wise Vehicle Counts:
+Right: Total=17 (Straight=7, Left=5, Right=5)
+Down:  Total=29 (Straight=17, Left=6, Right=6)
+Left:  Total=12 (Straight=6, Left=4, Right=2)
+Up:    Total=21 (Straight=16, Left=0, Right=0)
+
+Average Delays:
+Right: 2.17
+Down:  1.44
+Left:  1.63
+Up:    2.15
+
+Stopped Vehicles:
+Right: 18
+Down:  27
+Left:  31
+Up:    24
+----------------------------------------
+
+Time: 150s
+Direction-wise Vehicle Counts:
+Right: Total=17 (Straight=7, Left=5, Right=5)
+Down:  Total=29 (Straight=17, Left=6, Right=6)
+Left:  Total=35 (Straight=17, Left=8, Right=10)
+Up:    Total=33 (Straight=21, Left=0, Right=0)
+
+Average Delays:
+Right: 1.93
+Down:  1.74
+Left:  1.36
+Up:    2.02
+
+Stopped Vehicles:
+Right: 28
+Down:  31
+Left:  40
+Up:    31
+----------------------------------------
+
+Time: 180s
+Direction-wise Vehicle Counts:
+Right: Total=38 (Straight=19, Left=11, Right=8)
+Down:  Total=29 (Straight=17, Left=6, Right=6)
+Left:  Total=35 (Straight=17, Left=8, Right=10)
+Up:    Total=35 (Straight=23, Left=0, Right=0)
+
+Average Delays:
+Right: 1.82
+Down:  1.82
+Left:  1.45
+Up:    1.78
+
+Stopped Vehicles:
+Right: 34
+Down:  38
+Left:  48
+Up:    39
+----------------------------------------
+
+Time: 210s
+Direction-wise Vehicle Counts:
+Right: Total=39 (Straight=20, Left=11, Right=8)
+Down:  Total=44 (Straight=28, Left=7, Right=9)
+Left:  Total=49 (Straight=28, Left=9, Right=11)
+Up:    Total=35 (Straight=23, Left=0, Right=0)
+
+Average Delays:
+Right: 1.71
+Down:  1.74
+Left:  1.52
+Up:    1.72
+
+Stopped Vehicles:
+Right: 43
+Down:  43
+Left:  54
+Up:    49
+----------------------------------------
+
+Time: 240s
+Direction-wise Vehicle Counts:
+Right: Total=39 (Straight=20, Left=11, Right=8)
+Down:  Total=44 (Straight=28, Left=7, Right=9)
+Left:  Total=56 (Straight=33, Left=10, Right=13)
+Up:    Total=56 (Straight=37, Left=0, Right=0)
+
+Average Delays:
+Right: 1.81
+Down:  1.80
+Left:  1.41
+Up:    1.62
+
+Stopped Vehicles:
+Right: 49
+Down:  50
+Left:  63
+Up:    57
+----------------------------------------
+
+Time: 270s
+Direction-wise Vehicle Counts:
+Right: Total=57 (Straight=24, Left=19, Right=14)
+Down:  Total=58 (Straight=35, Left=10, Right=13)
+Left:  Total=56 (Straight=33, Left=10, Right=13)
+Up:    Total=56 (Straight=37, Left=0, Right=0)
+
+Average Delays:
+Right: 1.65
+Down:  1.79
+Left:  1.42
+Up:    1.69
+
+Stopped Vehicles:
+Right: 56
+Down:  57
+Left:  73
+Up:    63
+----------------------------------------
+
+Time: 300s
+Direction-wise Vehicle Counts:
+Right: Total=57 (Straight=24, Left=19, Right=14)
+Down:  Total=60 (Straight=37, Left=10, Right=13)
+Left:  Total=78 (Straight=51, Left=12, Right=15)
+Up:    Total=56 (Straight=37, Left=0, Right=0)
+
+Average Delays:
+Right: 1.63
+Down:  1.75
+Left:  1.46
+Up:    1.66
+
+Stopped Vehicles:
+Right: 66
+Down:  63
+Left:  76
+Up:    73
+----------------------------------------
+
+Time: 300s
+Direction-wise Vehicle Counts:
+Right: Total=57 (Straight=24, Left=19, Right=14)
+Down:  Total=60 (Straight=37, Left=10, Right=13)
+Left:  Total=78 (Straight=51, Left=12, Right=15)
+Up:    Total=56 (Straight=37, Left=0, Right=0)
+
+Average Delays:
+Right: 1.63
+Down:  1.75
+Left:  1.46
+Up:    1.66
+
+Stopped Vehicles:
+Right: 67
+Down:  63
+Left:  76
+Up:    73
+----------------------------------------
