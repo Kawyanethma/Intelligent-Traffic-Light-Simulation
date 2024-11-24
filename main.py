@@ -1261,9 +1261,19 @@ def avgDelayCal():
     directions = ['right', 'down', 'left', 'up']
 
     for direction in directions:
-        print('Stopped vehicles for direction', direction, ':', stoppedVehicles[direction])
-        if stoppedVehicles[direction] != 0:
-            avgDelay[direction] = 0.5 * (delayTimeForStoppedVehicles[direction] / stoppedVehicles[direction])
+        total_vehicles = vehicles[direction]['crossed'] + stoppedVehicles[direction]
+        if total_vehicles > 0:  # Prevent division by zero
+            # Average delay = Total delay time / Total number of vehicles
+            # This includes both stopped and non-stopped vehicles
+            avgDelay[direction] = delayTimeForStoppedVehicles[direction] / total_vehicles
+        else:
+            avgDelay[direction] = 0
+            
+        print(f'Direction: {direction}')
+        print(f'  Total vehicles: {total_vehicles}')
+        print(f'  Stopped vehicles: {stoppedVehicles[direction]}')
+        print(f'  Total delay time: {delayTimeForStoppedVehicles[direction]}')
+        print(f'  Average delay: {avgDelay[direction]:.2f} seconds')
 
 # Plot delay time for stopped vehicles
 # def plotDelayTime():
