@@ -9,6 +9,24 @@ import tkinter as tk
 from tkinter import messagebox
 from matplotlib import pyplot as plt
 from tkinter import ttk
+import numpy as np
+
+class DQNAgent:
+    def __init__(self, state_size, action_size):
+        self.state_size = state_size
+        self.action_size = action_size
+        self.memory = []
+        self.gamma = 0.95    # discount rate
+        self.epsilon = 1.0   # exploration rate
+        self.epsilon_min = 0.01
+        self.epsilon_decay = 0.995
+        self.learning_rate = 0.001
+        
+    def calculate_reward(self, stopped_vehicles, delay_times):
+        # Simple reward calculation: negative sum of stopped vehicles and delays
+        total_stopped = sum(stopped_vehicles.values())
+        total_delay = sum(delay_times.values())
+        return -(total_stopped + total_delay * 0.1)  # Weight delay less than stopped vehicles
 
 def get_simulation_parameters():
     # Create the main dialog window
@@ -49,7 +67,7 @@ def get_simulation_parameters():
     write_entry.grid(row=4, column=0, columnspan=3)
     
     # Traffic Mode
-    traffic_mode = tk.BooleanVar(value=True)
+    traffic_mode = tk.StringVar(value="random")
     mode_cb = ttk.Checkbutton(main_frame, text="Intelligent Traffic Mode", variable=traffic_mode)
     mode_cb.grid(row=5, column=0, columnspan=3, pady=(20,0))
     
@@ -110,8 +128,8 @@ def get_simulation_parameters():
         try:
             result['simulation_time'] = int(sim_time.get())
             result['write_period'] = int(write_period.get())
-            result['intelligent_mode'] = traffic_mode.get()
-            result['random_timer'] = random_timer.get()
+            result['intelligent_mode'] = traffic_mode.get() == "ml"
+            result['random_timer'] = traffic_mode.get() == "random"
             
             # If random timer is enabled, use default values
             if random_timer.get():
@@ -240,6 +258,13 @@ SLIDER_COLOR = (152, 195, 121)
 
 # Add this global variable at the top of the file with other globals
 speed_multiplier = 100  # default speed multiplier (100%)
+
+# Add to global variables
+rl_agent = None
+last_state = None
+last_action = None
+current_episode = 0
+max_episodes = 1000
 
 class Button:
     def __init__(self, x, y, width, height, text, callback):
@@ -767,10 +792,10 @@ class Vehicle(pygame.sprite.Sprite):
                                 directionDown['right'] += 1
                         else:
                             if (self.crossedIndex == 0 or (self.x > (
-                                    vehiclesTurned[self.direction][self.lane][self.crossedIndex - 1].x +
+                                    vehiclesTurned[self.direction][self.lane][self.crossedIndex - 1].y +
                                     vehiclesTurned[self.direction][self.lane][
-                                        self.crossedIndex - 1].image.get_rect().width + movingGap))):
-                                self.x -= actual_speed
+                                        self.crossedIndex - 1].image.get_rect().height + movingGap))):
+                                self.y -= actual_speed
             else:
                 if self.crossed == 0:
                     if ((self.y + self.image.get_rect().height <= self.stop or (
@@ -875,6 +900,11 @@ class Vehicle(pygame.sprite.Sprite):
 
 # Initialization of signals with default values
 def initialize():
+    global rl_agent
+    if intelligentMode:
+        state_size = 5  # 4 directions + current signal
+        action_size = 4  # Number of possible green time durations
+        rl_agent = DQNAgent(state_size, action_size)
     minTime = randomGreenSignalTimerRange[0]
     maxTime = randomGreenSignalTimerRange[1]
     if randomGreenSignalTimer:
@@ -1227,6 +1257,10 @@ Right: {stoppedVehicles['right']}
 Down:  {stoppedVehicles['down']}
 Left:  {stoppedVehicles['left']}
 Up:    {stoppedVehicles['up']}
+
+ML Metrics:
+Mode: {'ML' if intelligentMode else 'Random/Fixed'}
+Average Reward: {rl_agent.calculate_reward(stoppedVehicles, delayTimeForStoppedVehicles) if intelligentMode else 'N/A'}
 ----------------------------------------
 """
         with open("simulation_stats.txt", "a") as file:
