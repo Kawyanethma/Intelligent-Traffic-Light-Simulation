@@ -797,10 +797,10 @@ class Vehicle(pygame.sprite.Sprite):
                                 directionDown['right'] += 1
                         else:
                             if (self.crossedIndex == 0 or (self.x > (
-                                    vehiclesTurned[self.direction][self.lane][self.crossedIndex - 1].y +
+                                    vehiclesTurned[self.direction][self.lane][self.crossedIndex - 1].x +
                                     vehiclesTurned[self.direction][self.lane][
-                                        self.crossedIndex - 1].image.get_rect().height + movingGap))):
-                                self.y -= actual_speed
+                                        self.crossedIndex - 1].image.get_rect().width + movingGap))):
+                                self.x -= actual_speed
             else:
                 if self.crossed == 0:
                     if ((self.y + self.image.get_rect().height <= self.stop or (
