@@ -11,6 +11,8 @@ from matplotlib import pyplot as plt
 from tkinter import ttk
 import numpy as np
 
+from traffic_rl import TrafficRLAgent
+
 class DQNAgent:
     def __init__(self, state_size, action_size):
         self.state_size = state_size
@@ -265,6 +267,9 @@ last_state = None
 last_action = None
 current_episode = 0
 max_episodes = 1000
+
+# Initialize the agent
+agent = TrafficRLAgent()
 
 class Button:
     def __init__(self, x, y, width, height, text, callback):
@@ -932,12 +937,58 @@ def initialize():
 def printStatus():
     stoppedVehiclesInJunction = countStoppedVehicles()
     print('Stopped Vehicles in Junction:', stoppedVehiclesInJunction)
+
+def update():
+    stopped_vehicles = {
+        'right': len(simulation.right_vehicles_stopped),
+        'down': len(simulation.down_vehicles_stopped),
+        'left': len(simulation.left_vehicles_stopped),
+        'up': len(simulation.up_vehicles_stopped)
+    }
     
+    current_signal = simulation.current_signal  # Or however you track current signal
+    green_time, state = agent.get_green_time(stopped_vehicles, current_signal)    
 
 
 def repeat():
     global currentGreen, currentYellow, nextGreen
-
+    
+    # Get current state
+    stopped_counts = countStoppedVehicles()
+    
+    if intelligentMode:
+        direction, green_time, state = agent.get_green_time(stopped_counts, currentGreen)
+        
+        # Special handling for left direction (2)
+        if direction == 2:
+            nextGreen = 2
+            # Ensure minimum green time for clearing stuck vehicles
+            signals[currentGreen].green = max(green_time, 15)  # At least 15 seconds
+            
+            # Check for vehicles in junction
+            current_direction = directionNumbers[currentGreen]
+            vehicles_in_junction = False
+            
+            for lane in [0, 1, 2]:
+                if vehicles[current_direction][lane]:
+                    for vehicle in vehicles[current_direction][lane]:
+                        if not vehicle.crossed and vehicle.turned == 0:
+                            vehicles_in_junction = True
+                            break
+                if vehicles_in_junction:
+                    break
+            
+            # If vehicles are in junction, extend green time
+            if vehicles_in_junction:
+                signals[currentGreen].green += 5  # Add 5 more seconds
+        else:
+            nextGreen = (currentGreen + 1) % noOfSignals
+            if randomGreenSignalTimer:
+                signals[currentGreen].green = random.randint(randomGreenSignalTimerRange[0], randomGreenSignalTimerRange[1])
+            else:
+                signals[currentGreen].green = defaultGreen[currentGreen]
+    
+    # Rest of the repeat() function remains the same...
     while signals[currentGreen].green > 0:
         printStatus()
         updateValues()

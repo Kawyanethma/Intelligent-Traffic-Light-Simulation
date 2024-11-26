@@ -6,7 +6,7 @@ import torch.optim as optim
 import random
 
 class TrafficRLAgent:
-    def __init__(self, state_size=5, action_size=4):
+    def __init__(self, state_size=5, action_size=2):
         self.state_size = state_size
         self.action_size = action_size
         self.memory = deque(maxlen=2000)
@@ -24,6 +24,16 @@ class TrafficRLAgent:
         self.optimizer = optim.Adam(self.model.parameters(), lr=self.learning_rate)
         self.update_target_counter = 0
         self.target_update_frequency = 10
+        
+        # Add metrics tracking
+        self.metrics = {
+            'rewards': [],
+            'waiting_times': [],
+            'stopped_vehicles': [],
+            'decisions': [],
+            'accuracy': [],
+            'loss_history': []
+        }
     
     def _build_model(self):
         model = nn.Sequential(
@@ -40,10 +50,11 @@ class TrafficRLAgent:
     
     def get_state(self, stopped_vehicles, current_signal):
         state = []
-        # Normalize vehicle counts
+        # Get vehicle counts for all 4 directions
         for direction in ['right', 'down', 'left', 'up']:
-            state.append(min(stopped_vehicles[direction], 20) / 20.0)  # Normalize between 0 and 1
-        state.append(current_signal / (self.action_size - 1))  # Normalize signal
+            state.append(min(stopped_vehicles[direction], 20) / 20.0)
+        # Add current signal state
+        state.append(current_signal / 3.0)  # Normalize signal state (0-3)
         return np.array(state)
     
     def remember(self, state, action, reward, next_state, done):
@@ -95,22 +106,143 @@ class TrafficRLAgent:
             self.update_target_model()
             self.update_target_counter = 0
     
+    def evaluate_performance(self):
+        """Calculate and print performance metrics"""
+        if len(self.metrics['rewards']) == 0:
+            return
+        
+        print("\n=== Performance Metrics ===")
+        # Calculate average metrics over last 100 episodes
+        window = min(100, len(self.metrics['rewards']))
+        recent_rewards = self.metrics['rewards'][-window:]
+        recent_waiting = self.metrics['waiting_times'][-window:]
+        recent_stopped = self.metrics['stopped_vehicles'][-window:]
+        recent_accuracy = self.metrics['accuracy'][-window:]
+        
+        print(f"Last {window} episodes:")
+        print(f"Average Reward: {sum(recent_rewards) / window:.2f}")
+        print(f"Average Waiting Time: {sum(recent_waiting) / window:.2f} seconds")
+        print(f"Average Stopped Vehicles: {sum(recent_stopped) / window:.2f}")
+        print(f"Decision Accuracy: {sum(recent_accuracy) / window:.2%}")
+        
+        # Plot metrics if matplotlib is available
+        try:
+            self.plot_metrics()
+        except ImportError:
+            print("Matplotlib not available for plotting")
+    
+    def plot_metrics(self):
+        """Plot performance metrics"""
+        import matplotlib.pyplot as plt
+        
+        plt.figure(figsize=(15, 10))
+        
+        # Plot rewards
+        plt.subplot(2, 2, 1)
+        plt.plot(self.metrics['rewards'])
+        plt.title('Rewards over Time')
+        plt.xlabel('Episode')
+        plt.ylabel('Reward')
+        
+        # Plot waiting times
+        plt.subplot(2, 2, 2)
+        plt.plot(self.metrics['waiting_times'])
+        plt.title('Average Waiting Time')
+        plt.xlabel('Episode')
+        plt.ylabel('Time (s)')
+        
+        # Plot stopped vehicles
+        plt.subplot(2, 2, 3)
+        plt.plot(self.metrics['stopped_vehicles'])
+        plt.title('Total Stopped Vehicles')
+        plt.xlabel('Episode')
+        plt.ylabel('Count')
+        
+        # Plot accuracy
+        plt.subplot(2, 2, 4)
+        plt.plot(self.metrics['accuracy'])
+        plt.title('Decision Accuracy')
+        plt.xlabel('Episode')
+        plt.ylabel('Accuracy')
+        
+        plt.tight_layout()
+        plt.show()
+    
+    def update_metrics(self, state, action, reward, stopped_vehicles, waiting_times):
+        """Update performance metrics"""
+        # Store metrics
+        self.metrics['rewards'].append(reward)
+        self.metrics['waiting_times'].append(sum(waiting_times.values()) / len(waiting_times) if waiting_times else 0)
+        self.metrics['stopped_vehicles'].append(sum(stopped_vehicles.values()))
+        
+        # Calculate decision accuracy
+        optimal_action = self.get_optimal_action(stopped_vehicles)
+        accuracy = 1.0 if action == optimal_action else 0.0
+        self.metrics['accuracy'].append(accuracy)
+        
+        # Print current metrics every 100 episodes
+        if len(self.metrics['rewards']) % 100 == 0:
+            self.evaluate_performance()
+    
+    def get_optimal_action(self, stopped_vehicles):
+        """Calculate the optimal action based on traffic state"""
+        # Simple heuristic: choose direction with most waiting vehicles
+        max_waiting = -1
+        optimal_direction = 0
+        
+        for i, direction in enumerate(['right', 'down', 'left', 'up']):
+            if stopped_vehicles[direction] > max_waiting:
+                max_waiting = stopped_vehicles[direction]
+                optimal_direction = i
+        
+        return optimal_direction
+    
     def get_green_time(self, stopped_vehicles, current_signal):
         state = self.get_state(stopped_vehicles, current_signal)
         action = self.act(state)
         
-        # Convert action to green time using a more granular approach
-        green_time = self.min_green_time + (action * (self.max_green_time - self.min_green_time) // (self.action_size - 1))
-        return max(min(green_time, self.max_green_time), self.min_green_time), state
+        # Debug print and metrics update
+        print("\n=== RL Agent Decision ===")
+        print(f"Current Signal: {current_signal}")
+        print(f"State: {state}")
+        print(f"Action chosen: {action}")
+        print(f"Optimal action: {self.get_optimal_action(stopped_vehicles)}")
+        print(f"Stopped vehicles: {stopped_vehicles}")
+        
+        # Calculate green time and update metrics
+        green_time = self.calculate_green_time(action, stopped_vehicles)
+        reward = self.calculate_reward(stopped_vehicles, {})  # Empty waiting times for now
+        self.update_metrics(state, action, reward, stopped_vehicles, {})
+        
+        return action, green_time, state
+    
+    def calculate_green_time(self, action, stopped_vehicles):
+        """Calculate appropriate green time based on traffic state"""
+        direction_map = {0: 'right', 1: 'down', 2: 'left', 3: 'up'}
+        vehicles_waiting = stopped_vehicles[direction_map[action]]
+        
+        if vehicles_waiting > 15:
+            return self.max_green_time
+        elif vehicles_waiting > 8:
+            return (self.min_green_time + self.max_green_time) // 2
+        else:
+            return self.min_green_time
     
     def calculate_reward(self, stopped_vehicles, waiting_times):
-        # Calculate reward based on both number of stopped vehicles and waiting times
+        # Penalize heavily for vehicles stuck in left direction
+        left_penalty = -50 if stopped_vehicles['left'] > 5 else 0
+        
+        # Calculate base reward
         total_stopped = sum(stopped_vehicles.values())
         avg_waiting_time = sum(waiting_times.values()) / len(waiting_times) if waiting_times else 0
         
-        # Negative reward proportional to stopped vehicles and waiting time
-        reward = -(total_stopped * 0.5 + avg_waiting_time * 0.5)
-        return max(-100, min(reward, 0))  # Clip reward between -100 and 0
+        # Combine rewards with extra weight on left direction
+        base_reward = -(total_stopped * 0.5 + avg_waiting_time * 0.5)
+        total_reward = base_reward + left_penalty
+        
+        # Add reward tracking
+        print(f"Reward received: {total_reward}")
+        return max(-100, min(total_reward, 0))  # Clip between -100 and 0
     
     def train_model(self, state, action, reward, next_state, done):
         self.remember(state, action, reward, next_state, done)
@@ -120,10 +252,33 @@ if __name__ == "__main__":
     # Create an agent instance
     agent = TrafficRLAgent()
     
-    # Example usage
-    stopped_vehicles = {'right': 5, 'down': 3, 'left': 4, 'up': 2}
-    current_signal = 0
+    def get_stopped_vehicles_from_simulation(simulation):
+        """Get number of stopped vehicles from the simulation for each direction"""
+        stopped_vehicles = {
+            'right': len(simulation.right_vehicles_stopped),
+            'down': len(simulation.down_vehicles_stopped),
+            'left': len(simulation.left_vehicles_stopped),
+            'up': len(simulation.up_vehicles_stopped)
+        }
+        
+        # Print the stopped vehicles count
+        print("\nStopped Vehicles Count:")
+        print("----------------------")
+        print(f"Right: {stopped_vehicles['right']} vehicles")
+        print(f"Down:  {stopped_vehicles['down']} vehicles")
+        print(f"Left:  {stopped_vehicles['left']} vehicles")
+        print(f"Up:    {stopped_vehicles['up']} vehicles")
+        print(f"Total: {sum(stopped_vehicles.values())} vehicles")
+        print("----------------------\n")
+        
+        return stopped_vehicles
     
-    # Get green time and state
-    green_time, state = agent.get_green_time(stopped_vehicles, current_signal)
-    print(f"Recommended green time: {green_time}")
+    # In your main simulation loop:
+    def update(simulation, current_signal):
+        # Get and print real-time stopped vehicles data
+        stopped_vehicles = get_stopped_vehicles_from_simulation(simulation)
+        
+        # Get green time and state from agent
+        green_time, state = agent.get_green_time(stopped_vehicles, current_signal)
+        
+        return green_time

@@ -1798,3 +1798,291 @@ Down:  25
 Left:  36
 Up:    41
 ----------------------------------------
+
+Time: 30s
+Direction-wise Vehicle Counts:
+Right: Total=7 (Straight=6, Left=0, Right=1)
+Down:  Total=0 (Straight=0, Left=0, Right=0)
+Left:  Total=0 (Straight=0, Left=0, Right=0)
+Up:    Total=0 (Straight=0, Left=0, Right=0)
+
+Average Delays:
+Right: 2.14
+Down:  3.33
+Left:  7.50
+Up:    15.00
+
+Stopped Vehicles:
+Right: 7
+Down:  9
+Left:  4
+Up:    2
+
+ML Metrics:
+Mode: Random/Fixed
+Average Reward: N/A
+----------------------------------------
+
+Time: 60s
+Direction-wise Vehicle Counts:
+Right: Total=13 (Straight=10, Left=2, Right=1)
+Down:  Total=0 (Straight=0, Left=0, Right=0)
+Left:  Total=0 (Straight=0, Left=0, Right=0)
+Up:    Total=0 (Straight=0, Left=0, Right=0)
+
+Average Delays:
+Right: 2.40
+Down:  4.00
+Left:  3.75
+Up:    6.00
+
+Stopped Vehicles:
+Right: 12
+Down:  15
+Left:  16
+Up:    10
+
+ML Metrics:
+Mode: Random/Fixed
+Average Reward: N/A
+----------------------------------------
+
+Time: 90s
+Direction-wise Vehicle Counts:
+Right: Total=21 (Straight=12, Left=5, Right=4)
+Down:  Total=0 (Straight=0, Left=0, Right=0)
+Left:  Total=0 (Straight=0, Left=0, Right=0)
+Up:    Total=0 (Straight=0, Left=0, Right=0)
+
+Average Delays:
+Right: 2.09
+Down:  3.91
+Left:  3.60
+Up:    4.50
+
+Stopped Vehicles:
+Right: 22
+Down:  23
+Left:  25
+Up:    20
+
+ML Metrics:
+Mode: Random/Fixed
+Average Reward: N/A
+----------------------------------------
+
+Time: 120s
+Direction-wise Vehicle Counts:
+Right: Total=29 (Straight=15, Left=7, Right=7)
+Down:  Total=0 (Straight=0, Left=0, Right=0)
+Left:  Total=0 (Straight=0, Left=0, Right=0)
+Up:    Total=0 (Straight=0, Left=0, Right=0)
+
+Average Delays:
+Right: 1.94
+Down:  3.75
+Left:  3.64
+Up:    4.62
+
+Stopped Vehicles:
+Right: 33
+Down:  32
+Left:  33
+Up:    26
+
+ML Metrics:
+Mode: Random/Fixed
+Average Reward: N/A
+----------------------------------------
+
+Time: 30s
+Direction-wise Vehicle Counts:
+Right: Total=1 (Straight=0, Left=1, Right=0)
+Down:  Total=6 (Straight=5, Left=1, Right=0)
+Left:  Total=6 (Straight=2, Left=1, Right=2)
+Up:    Total=0 (Straight=0, Left=0, Right=0)
+
+Average Delays:
+Right: 3.40
+Down:  1.80
+Left:  1.92
+Up:    4.29
+
+Stopped Vehicles:
+Right: 4
+Down:  4
+Left:  7
+Up:    7
+
+ML Metrics:
+Mode: Random/Fixed
+Average Reward: N/A
+----------------------------------------
+
+Time: 60s
+Direction-wise Vehicle Counts:
+Right: Total=10 (Straight=3, Left=4, Right=3)
+Down:  Total=8 (Straight=6, Left=1, Right=0)
+Left:  Total=8 (Straight=2, Left=2, Right=4)
+Up:    Total=13 (Straight=8, Left=0, Right=0)
+
+Average Delays:
+Right: 1.71
+Down:  2.14
+Left:  2.58
+Up:    1.75
+
+Stopped Vehicles:
+Right: 11
+Down:  15
+Left:  11
+Up:    15
+
+ML Metrics:
+Mode: Random/Fixed
+Average Reward: N/A
+----------------------------------------
+
+Time: 90s
+Direction-wise Vehicle Counts:
+Right: Total=10 (Straight=3, Left=4, Right=3)
+Down:  Total=17 (Straight=14, Left=3, Right=0)
+Left:  Total=15 (Straight=6, Left=5, Right=4)
+Up:    Total=21 (Straight=11, Left=0, Right=0)
+
+Average Delays:
+Right: 2.13
+Down:  1.63
+Left:  2.06
+Up:    1.75
+
+Stopped Vehicles:
+Right: 21
+Down:  24
+Left:  18
+Up:    19
+
+ML Metrics:
+Mode: Random/Fixed
+Average Reward: N/A
+----------------------------------------
+
+Time: 120s
+Direction-wise Vehicle Counts:
+Right: Total=23 (Straight=11, Left=7, Right=5)
+Down:  Total=29 (Straight=22, Left=4, Right=3)
+Left:  Total=22 (Straight=11, Left=6, Right=4)
+Up:    Total=21 (Straight=11, Left=0, Right=0)
+
+Average Delays:
+Right: 1.65
+Down:  1.43
+Left:  1.90
+Up:    2.00
+
+Stopped Vehicles:
+Right: 28
+Down:  31
+Left:  27
+Up:    28
+
+ML Metrics:
+Mode: Random/Fixed
+Average Reward: N/A
+----------------------------------------
+
+Time: 30s
+Direction-wise Vehicle Counts:
+Right: Total=2 (Straight=1, Left=0, Right=1)
+Down:  Total=12 (Straight=8, Left=3, Right=1)
+Left:  Total=0 (Straight=0, Left=0, Right=0)
+Up:    Total=0 (Straight=0, Left=0, Right=0)
+
+Average Delays:
+Right: 2.33
+Down:  0.76
+Left:  6.00
+Up:    5.00
+
+Stopped Vehicles:
+Right: 4
+Down:  9
+Left:  5
+Up:    6
+
+ML Metrics:
+Mode: Random/Fixed
+Average Reward: N/A
+----------------------------------------
+
+Time: 60s
+Direction-wise Vehicle Counts:
+Right: Total=2 (Straight=1, Left=0, Right=1)
+Down:  Total=12 (Straight=8, Left=3, Right=1)
+Left:  Total=8 (Straight=6, Left=1, Right=1)
+Up:    Total=14 (Straight=7, Left=0, Right=0)
+
+Average Delays:
+Right: 2.59
+Down:  1.54
+Left:  1.92
+Up:    1.67
+
+Stopped Vehicles:
+Right: 16
+Down:  16
+Left:  17
+Up:    13
+
+ML Metrics:
+Mode: Random/Fixed
+Average Reward: N/A
+----------------------------------------
+
+Time: 90s
+Direction-wise Vehicle Counts:
+Right: Total=20 (Straight=7, Left=4, Right=9)
+Down:  Total=30 (Straight=17, Left=7, Right=5)
+Left:  Total=8 (Straight=6, Left=1, Right=1)
+Up:    Total=14 (Straight=7, Left=0, Right=0)
+
+Average Delays:
+Right: 1.20
+Down:  1.09
+Left:  2.44
+Up:    2.08
+
+Stopped Vehicles:
+Right: 25
+Down:  28
+Left:  24
+Up:    22
+
+ML Metrics:
+Mode: Random/Fixed
+Average Reward: N/A
+----------------------------------------
+
+Time: 30s
+Direction-wise Vehicle Counts:
+Right: Total=0 (Straight=0, Left=0, Right=0)
+Down:  Total=7 (Straight=4, Left=2, Right=1)
+Left:  Total=0 (Straight=0, Left=0, Right=0)
+Up:    Total=0 (Straight=0, Left=0, Right=0)
+
+Average Delays:
+Right: 3.75
+Down:  1.50
+Left:  3.00
+Up:    3.75
+
+Stopped Vehicles:
+Right: 4
+Down:  3
+Left:  10
+Up:    8
+
+ML Metrics:
+Mode: Random/Fixed
+Average Reward: N/A
+----------------------------------------
