@@ -1389,6 +1389,3 @@ class Main:
         control_panel.draw(screen)
 
         pygame.display.update()
-
-
-Main()
