@@ -1275,17 +1275,6 @@ def avgDelayCal():
         print(f'  Total delay time: {delayTimeForStoppedVehicles[direction]}')
         print(f'  Average delay: {avgDelay[direction]:.2f} seconds')
 
-# Plot delay time for stopped vehicles
-# def plotDelayTime():
-#     directions = ['right', 'down', 'left', 'up']
-#     delay = [delayTimeForStoppedVehicles['right'], delayTimeForStoppedVehicles['down'],
-#              delayTimeForStoppedVehicles['left'], delayTimeForStoppedVehicles['up']]
-#     plt.bar(directions, delay)
-#     plt.xlabel('Directions')
-#     plt.ylabel('Delay Time')
-#     plt.title('Delay Time for Stopped Vehicles')
-#     plt.show()
-
 # Main class for the simulation
 class Main:
     global allowedVehicleTypesList
