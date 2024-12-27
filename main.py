@@ -718,7 +718,7 @@ class Vehicle(pygame.sprite.Sprite):
                 if self.willTurn == 0:
                     vehiclesNotTurned[self.direction][self.lane].append(self)
                     self.crossedIndex = len(vehiclesNotTurned[self.direction][self.lane]) - 1
-                    print('no trun down')
+                    print('no turn down')
                     directionDown['straight'] += 1
             if self.willTurn == 1:
                 if self.lane == 1:
