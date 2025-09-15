@@ -1,6 +1,6 @@
 # Intelligent Traffic Light System Using Machine Learning
 
-This repository contains a **simulation-driven Intelligent Traffic Light System** that optimizes traffic flow in urban environments using **machine learning, image processing, and reinforcement learning**. The system simulates a four-way junction, dynamically adjusts traffic signals based on vehicle density, and evaluates performance with real-time data logging and visualization.
+This repository contains a **simulation-driven Intelligent Traffic Light System** that optimizes traffic flow in urban environments using **algorithms and reinforcement learning**. The system simulates a four-way junction, dynamically adjusts traffic signals based on vehicle density, and evaluates performance with real-time data logging and visualization.
 
 <div align="center">
 
