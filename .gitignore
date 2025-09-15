@@ -1,19 +1,42 @@
-# Python cache and environments
+########## Python cache and environments ##########
 __pycache__/
 *.py[cod]
 *.pyd
 .venv/
-.env/
+.tox/
+.nox/
+.pytest_cache/
+.coverage*
+htmlcov/
+
+# Local env files (keep .env.example tracked)
 .env
 
-# PyInstaller outputs
+########## Build artifacts ##########
+# PyInstaller
 build/
 dist/
 *.spec
+!main.spec
 
-# Installer outputs
-*.exe
+# Installer outputs (Inno Setup)
 installer/Output*/
+*.exe
 
-# VS Code
+########## Packaging / wheels ##########
+*.egg-info/
+.eggs/
+*.egg
+pip-wheel-metadata/
+
+########## IDE / editor ##########
 .vscode/
+.idea/
+.vs/
+
+########## OS junk ##########
+Thumbs.db
+.DS_Store
+
+########## Logs / misc ##########
+*.log

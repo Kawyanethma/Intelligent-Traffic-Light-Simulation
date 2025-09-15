@@ -80,10 +80,11 @@ Write-Host "Building installer using: $resolvedIscc" -ForegroundColor Cyan
 $installerDir = Split-Path -Parent $ScriptPath
 $projectRoot = Split-Path -Parent $installerDir
 $distDir = Join-Path $projectRoot 'dist'
-$exePath = Join-Path $distDir 'main.exe'
+$exeName = if ($defines.ContainsKey('APP_EXE_NAME') -and $defines['APP_EXE_NAME']) { $defines['APP_EXE_NAME'] } else { 'main.exe' }
+$exePath = Join-Path $distDir $exeName
 if (-not (Test-Path $exePath)) {
     Write-Error @"
-dist\\main.exe not found.
+$exePath not found.
 Please build the executable first, e.g.:
   python -m pip install pyinstaller
   pyinstaller --onefile main.py
