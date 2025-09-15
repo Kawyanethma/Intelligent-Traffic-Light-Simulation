@@ -13,7 +13,9 @@ This repository contains a **simulation-driven Intelligent Traffic Light System*
 
 ##  Credits
 
-This project is **built upon and inspired by** the excellent work from: [mihir-m-gandhi / Basic-Traffic-Intersection-Simulation](https://github.com/mihir-m-gandhi/Basic-Traffic-Intersection-Simulation)
+- <a href="https://www.flaticon.com/free-icons/traffic" title="traffic icons">Traffic icons created by Freepik - Flaticon</a>
+
+- This project is **built upon and inspired by** the excellent work from: [mihir-m-gandhi / Basic-Traffic-Intersection-Simulation](https://github.com/mihir-m-gandhi/Basic-Traffic-Intersection-Simulation)
 
 I extended it with:
 - **Reinforcement Learning integration** for adaptive signal timing.
