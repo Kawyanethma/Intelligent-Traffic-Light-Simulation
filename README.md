@@ -1,6 +1,12 @@
 # Intelligent Traffic Light System Using Machine Learning
 
 This repository contains a **simulation-driven Intelligent Traffic Light System** that optimizes traffic flow in urban environments using **machine learning, image processing, and reinforcement learning**. The system simulates a four-way junction, dynamically adjusts traffic signals based on vehicle density, and evaluates performance with real-time data logging and visualization.
+<p align="center">
+	<img alt="Static Badge" src="https://img.shields.io/badge/Python-3.10%2B-green?logo=python&logoColor=yellow&logoSize=auto&cacheSeconds=3600">
+	<img alt="Static Badge" src="https://img.shields.io/badge/Pandas-grey?logo=pandas&logoSize=auto&cacheSeconds=3600">
+	<img alt="Static Badge" src="https://img.shields.io/badge/NSIS-Insteller-green?logo=nsis&logoSize=auto&labelColor=grey&color=green&cacheSeconds=3600">
+</p>
+
 
 ##  Credits
 
