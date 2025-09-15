@@ -2,6 +2,15 @@
 
 This repository contains a **simulation-driven Intelligent Traffic Light System** that optimizes traffic flow in urban environments using **machine learning, image processing, and reinforcement learning**. The system simulates a four-way junction, dynamically adjusts traffic signals based on vehicle density, and evaluates performance with real-time data logging and visualization.
 
+##  Credits
+
+This project is **built upon and inspired by** the excellent work from: [mihir-m-gandhi / Basic-Traffic-Intersection-Simulation](https://github.com/mihir-m-gandhi/Basic-Traffic-Intersection-Simulation)
+
+I extended it with:
+- **Reinforcement Learning integration** for adaptive signal timing.
+- **Data logging & visualization** (waiting time, throughput, queue lengths).
+- **Tkinter-based control panel** for real-time parameter changes.
+
 
 ## 📌 Project Overview
 
