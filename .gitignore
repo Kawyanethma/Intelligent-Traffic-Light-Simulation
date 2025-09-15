@@ -1,0 +1,19 @@
+# Python cache and environments
+__pycache__/
+*.py[cod]
+*.pyd
+.venv/
+.env/
+.env
+
+# PyInstaller outputs
+build/
+dist/
+*.spec
+
+# Installer outputs
+*.exe
+installer/Output*/
+
+# VS Code
+.vscode/

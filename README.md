@@ -68,6 +68,14 @@ I extended it with:
     <img src="https://github.com/user-attachments/assets/071546a9-dcb7-41b8-a1ec-0536188e32b7" alt="Control Panel" width="95%">
   </p>
   </td>
+    </div>
+
+    ## 🧱 Build & Package (Windows)
+
+    To build the standalone EXE and the Windows installer, follow the step-by-step guide:
+
+    - See: [Build and Package (Windows)](README-BUILD.md)
+
 </tr>
 <tr>
   <th>
