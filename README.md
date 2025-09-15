@@ -11,8 +11,6 @@ This repository contains a **simulation-driven Intelligent Traffic Light System*
 </div>
 
 
-
-
 ##  Credits
 
 This project is **built upon and inspired by** the excellent work from: [mihir-m-gandhi / Basic-Traffic-Intersection-Simulation](https://github.com/mihir-m-gandhi/Basic-Traffic-Intersection-Simulation)
@@ -69,13 +67,6 @@ I extended it with:
   </p>
   </td>
     </div>
-
-    ## 🧱 Build & Package (Windows)
-
-    To build the standalone EXE and the Windows installer, follow the step-by-step guide:
-
-    - See: [Build and Package (Windows)](README-BUILD.md)
-
 </tr>
 <tr>
   <th>
@@ -266,6 +257,10 @@ python src/simulation.py
 
 - Unit tests for **vehicle generation, signal adjustment, data logging**.
 - Performance metrics validation for **waiting times, throughput, queue lengths**
+
+## 🧱 Build & Package (Windows)
+To build the standalone EXE and the Windows installer, follow the step-by-step guide:
+- See: [Build and Package (Windows)](README-BUILD.md)
 
 ## 🤝 Contributing
 
